@@ -1,23 +1,48 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class TrainConsistManagementApp {
+
     public static void main(String[] args) {
-        // Requirement: Print Welcome Message
+
+        // UC1 — Initialization
         System.out.println("=== Train Consist Management App ===");
 
-        // Key Concept: List Interface & ArrayList (Dynamic Initialization)
-        // We define the list to hold String objects representing bogies
         List<String> trainConsist = new ArrayList<>();
 
-        // Key Concept: size() method
-        // Displaying the initial state before any coaches are added
-        int initialBogieCount = trainConsist.size();
+        System.out.println("Train initialized successfully.");
+        System.out.println("Initial bogie count: " + trainConsist.size());
 
-        System.out.println("Status: Train consist initialized.");
-        System.out.println("Initial Bogie Count: " + initialBogieCount);
-        System.out.println("------------------------------------");
+        // =========================
+        // UC2 — Add Passenger Bogies
+        // =========================
 
-        // The foundation is now set for adding bogies in UC2
+        System.out.println("\nAdding passenger bogies...");
+
+        trainConsist.add("Sleeper");
+        trainConsist.add("AC Chair");
+        trainConsist.add("First Class");
+
+        // Display after adding
+        System.out.println("Bogies after addition:");
+        System.out.println(trainConsist);
+
+        // Remove a bogie
+        System.out.println("\nRemoving 'AC Chair'...");
+        trainConsist.remove("AC Chair");
+
+        // Check existence
+        System.out.println("\nChecking if 'Sleeper' exists:");
+        if (trainConsist.contains("Sleeper")) {
+            System.out.println("Sleeper bogie is present.");
+        } else {
+            System.out.println("Sleeper bogie is NOT present.");
+        }
+
+        // Final state
+        System.out.println("\nFinal Train Consist:");
+        System.out.println(trainConsist);
+
+        System.out.println("\nProgram is running...");
     }
 }
