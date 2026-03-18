@@ -83,7 +83,6 @@ public class TrainConsistManagementApp {
         System.out.println("\nMaintaining train formation using LinkedHashSet...");
 
         LinkedHashSet<String> formation = new LinkedHashSet<>();
-
         formation.add("Engine");
         formation.add("Sleeper");
         formation.add("Cargo");
@@ -92,6 +91,22 @@ public class TrainConsistManagementApp {
 
         System.out.println("Final Train Formation (No duplicates, ordered):");
         System.out.println(formation);
+
+        // =========================
+        // UC6 — HashMap (Bogie → Capacity)
+        // =========================
+        System.out.println("\nMapping bogies to their capacities using HashMap...");
+
+        HashMap<String, Integer> bogieCapacity = new HashMap<>();
+        bogieCapacity.put("Sleeper", 72);
+        bogieCapacity.put("AC Chair", 60);
+        bogieCapacity.put("First Class", 40);
+
+        System.out.println("\nBogie Capacity Details:");
+
+        for (Map.Entry<String, Integer> entry : bogieCapacity.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
 
         // =========================
         // END
