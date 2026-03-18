@@ -1,23 +1,21 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class TrainConsistManagementApp {
+
     public static void main(String[] args) {
-        // Requirement: Print Welcome Message
+
+        // Welcome Message
         System.out.println("=== Train Consist Management App ===");
 
-        // Key Concept: List Interface & ArrayList (Dynamic Initialization)
-        // We define the list to hold String objects representing bogies
+        // Initialize Train Consist (Dynamic List)
         List<String> trainConsist = new ArrayList<>();
 
-        // Key Concept: size() method
-        // Displaying the initial state before any coaches are added
-        int initialBogieCount = trainConsist.size();
+        // Display Initial Bogie Count
+        System.out.println("Train initialized successfully.");
+        System.out.println("Initial bogie count: " + trainConsist.size());
 
-        System.out.println("Status: Train consist initialized.");
-        System.out.println("Initial Bogie Count: " + initialBogieCount);
-        System.out.println("------------------------------------");
-
-        // The foundation is now set for adding bogies in UC2
+        // Continue Program
+        System.out.println("Program is running...");
     }
 }
