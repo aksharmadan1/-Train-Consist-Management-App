@@ -44,11 +44,10 @@ public class TrainConsistManagementApp {
         System.out.println("\nTracking unique bogie IDs...");
 
         Set<String> bogieIds = new HashSet<>();
-
         bogieIds.add("B101");
         bogieIds.add("B102");
         bogieIds.add("B103");
-        bogieIds.add("B101"); // Duplicate
+        bogieIds.add("B101"); // duplicate
 
         System.out.println("Unique Bogie IDs:");
         System.out.println(bogieIds);
@@ -59,8 +58,6 @@ public class TrainConsistManagementApp {
         System.out.println("\nMaintaining ordered train consist using LinkedList...");
 
         LinkedList<String> linkedTrain = new LinkedList<>();
-
-        // Add bogies
         linkedTrain.add("Engine");
         linkedTrain.add("Sleeper");
         linkedTrain.add("AC");
@@ -70,18 +67,31 @@ public class TrainConsistManagementApp {
         System.out.println("Initial Train:");
         System.out.println(linkedTrain);
 
-        // Insert Pantry Car at position 2
         System.out.println("\nInserting 'Pantry Car' at position 2...");
         linkedTrain.add(2, "Pantry Car");
 
-        // Remove first and last bogies
         System.out.println("\nRemoving first and last bogies...");
         linkedTrain.removeFirst();
         linkedTrain.removeLast();
 
-        // Final state
         System.out.println("\nFinal Train Consist (LinkedList):");
         System.out.println(linkedTrain);
+
+        // =========================
+        // UC5 — LinkedHashSet (Order + Uniqueness)
+        // =========================
+        System.out.println("\nMaintaining train formation using LinkedHashSet...");
+
+        LinkedHashSet<String> formation = new LinkedHashSet<>();
+
+        formation.add("Engine");
+        formation.add("Sleeper");
+        formation.add("Cargo");
+        formation.add("Guard");
+        formation.add("Sleeper"); // duplicate
+
+        System.out.println("Final Train Formation (No duplicates, ordered):");
+        System.out.println(formation);
 
         // =========================
         // END
