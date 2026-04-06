@@ -3,45 +3,47 @@ import java.util.*;
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
-        System.out.println("=== Train Consist Management System ===");
+        System.out.println("=== Train Consist Management System ===\n");
 
-        // UC16: Bubble Sort for Passenger Bogie Capacities
-        int[] capacities = {72, 40, 24, 90, 18, 54};
+        // UC16: Data for Sorting
+        int[] bogieCapacities = {72, 40, 24, 90, 18, 54};
 
-        System.out.println("\n=== UC16: Sorting Bogie Capacities (Bubble Sort) ===");
-        System.out.println("Original Capacities: " + Arrays.toString(capacities));
+        System.out.println("--- UC16: Bubble Sort Algorithm ---");
+        System.out.println("Original Capacities: " + Arrays.toString(bogieCapacities));
 
-        performBubbleSort(capacities);
+        // Perform the manual sort
+        bubbleSort(bogieCapacities);
 
-        System.out.println("Sorted Capacities  : " + Arrays.toString(capacities));
+        System.out.println("Sorted Capacities  : " + Arrays.toString(bogieCapacities));
         System.out.println("\nProgram continues execution safely...");
     }
 
     /**
-     * UC16: Implementation of the Bubble Sort Algorithm
-     * Time Complexity: O(n^2)
+     * UC16: Bubble Sort Implementation
+     * Note: We avoid using Arrays.sort() here to learn the logic.
      */
-    private static void performBubbleSort(int[] arr) {
+    private static void bubbleSort(int[] arr) {
         int n = arr.length;
         boolean swapped;
 
-        // Outer loop for number of passes
+        // Outer loop for the number of passes
         for (int i = 0; i < n - 1; i++) {
             swapped = false;
 
             // Inner loop for adjacent comparisons
-            // (n - 1 - i) because the last i elements are already sorted
+            // (n - 1 - i) prevents checking elements that are already bubbled to the end
             for (int j = 0; j < n - 1 - i; j++) {
                 if (arr[j] > arr[j + 1]) {
-                    // Swap logic using a temporary variable
+                    // SWAPPING LOGIC
                     int temp = arr[j];
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
-                    swapped = true;
+
+                    swapped = true; // Mark that a change happened
                 }
             }
 
-            // Optimization: If no two elements were swapped by inner loop, then break
+            // OPTIMIZATION: If no two elements were swapped, array is already sorted
             if (!swapped) break;
         }
     }
