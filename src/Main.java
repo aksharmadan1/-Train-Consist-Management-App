@@ -1,19 +1,21 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
-// Bogie Class for UC7 (Object-based handling)
+// Bogie Class (Used for UC7 & UC8)
 class Bogie {
-    String id;
-    String name;
-    int capacity;
+    private String id;
+    private String name;
+    private int capacity;
 
-    Bogie(String id, String name, int capacity) {
+    public Bogie(String id, String name, int capacity) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
     }
 
-    public int getCapacity() { return capacity; }
     public String getId() { return id; }
+    public String getName() { return name; }
+    public int getCapacity() { return capacity; }
 
     @Override
     public String toString() {
@@ -23,74 +25,73 @@ class Bogie {
 
 public class TrainConsistManagementApp {
 
-    // UC2 & UC7: List to store bogie objects
+    // Collections for UC2 to UC6
     private static List<Bogie> bogieList = new ArrayList<>();
-
-    // UC3: HashSet for Unique IDs
     private static Set<String> uniqueBogieIds = new HashSet<>();
-
-    // UC4: TreeSet for Ordered IDs
     private static TreeSet<String> orderedBogieIds = new TreeSet<>();
-
-    // UC5: LinkedHashSet for Insertion Order
-    private static Set<String> insertionOrderBogies = new LinkedHashSet<>();
-
-    // UC6: HashMap for ID to Capacity Mapping
+    private static Set<String> insertionOrderIds = new LinkedHashSet<>();
     private static Map<String, Integer> bogieCapacityMap = new HashMap<>();
 
     public static void main(String[] args) {
-        System.out.println("--- UC1: Initialize Train Consist ---");
-        initializeTrain();
+        // UC1: Initialize
+        System.out.println("=== UC1: Initialize Train ===");
+        System.out.println("Train Consist Management System Started.\n");
 
-        System.out.println("\n--- UC2 to UC6: Data Processing ---");
-        processBogie("B101", "Sleeper", 72);
-        processBogie("B105", "AC Chair", 40);
-        processBogie("B103", "First Class", 24);
-        processBogie("B102", "General", 90);
+        // UC2 - UC6: Adding Data
+        addBogieData("B101", "Sleeper", 72);
+        addBogieData("B105", "AC Chair", 40);
+        addBogieData("B103", "First Class", 24);
+        addBogieData("B102", "General", 90);
+        addBogieData("B104", "Sleeper", 72);
 
-        displayStatus();
+        // Display Collection States
+        displayCollectionStatus();
 
-        System.out.println("\n--- UC7: Sort Bogies by Capacity (Comparator) ---");
-        sortAndDisplayByCapacity();
+        // UC7: Sort by Capacity
+        sortBogiesByCapacity();
+
+        // UC8: Filter using Streams
+        filterHighCapacityBogies(60);
     }
 
-    private static void initializeTrain() {
-        System.out.println("Train Consist Management System Initialized.");
-        System.out.println("Status: Ready for Bogie Assignment.");
+    private static void addBogieData(String id, String name, int capacity) {
+        Bogie bogie = new Bogie(id, name, capacity);
+
+        bogieList.add(bogie);                // UC2: ArrayList
+        uniqueBogieIds.add(id);             // UC3: HashSet
+        orderedBogieIds.add(id);            // UC4: TreeSet
+        insertionOrderIds.add(id);          // UC5: LinkedHashSet
+        bogieCapacityMap.put(id, capacity); // UC6: HashMap
     }
 
-    private static void processBogie(String id, String name, int capacity) {
-        // UC2: Adding to List
-        Bogie newBogie = new Bogie(id, name, capacity);
-        bogieList.add(newBogie);
-
-        // UC3: Track Uniqueness
-        uniqueBogieIds.add(id);
-
-        // UC4: Maintain Sorted IDs
-        orderedBogieIds.add(id);
-
-        // UC5: Maintain Insertion Order
-        insertionOrderBogies.add(id);
-
-        // UC6: Mapping ID to Capacity
-        bogieCapacityMap.put(id, capacity);
-    }
-
-    private static void displayStatus() {
+    private static void displayCollectionStatus() {
+        System.out.println("=== UC3-UC6: Collection Snapshots ===");
         System.out.println("Unique IDs (HashSet): " + uniqueBogieIds);
         System.out.println("Sorted IDs (TreeSet): " + orderedBogieIds);
-        System.out.println("Insertion Order (LinkedHashSet): " + insertionOrderBogies);
-        System.out.println("Bogie Capacity Map (HashMap): " + bogieCapacityMap);
+        System.out.println("Insertion Order (LinkedHashSet): " + insertionOrderIds);
+        System.out.println("Capacity Mapping (HashMap): " + bogieCapacityMap + "\n");
     }
 
-    private static void sortAndDisplayByCapacity() {
-        // UC7: Using Comparator.comparingInt for sorting
+    private static void sortBogiesByCapacity() {
+        System.out.println("=== UC7: Sorted by Capacity (Comparator) ===");
         bogieList.sort(Comparator.comparingInt(Bogie::getCapacity));
+        bogieList.forEach(System.out::println);
+        System.out.println();
+    }
 
-        System.out.println("Bogies sorted by Seating Capacity (Ascending):");
-        for (Bogie b : bogieList) {
-            System.out.println(b);
+    private static void filterHighCapacityBogies(int threshold) {
+        System.out.println("=== UC8: Filtering Bogies (Streams) ===");
+        System.out.println("Filtering bogies with capacity > " + threshold + "...");
+
+        // Stream Pipeline: Source -> Filter -> Collect
+        List<Bogie> filtered = bogieList.stream()
+                .filter(b -> b.getCapacity() > threshold)
+                .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            System.out.println("No bogies found.");
+        } else {
+            filtered.forEach(System.out::println);
         }
     }
 }
