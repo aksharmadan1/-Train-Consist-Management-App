@@ -1,7 +1,7 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-// Bogie Class (Used for UC7 & UC8)
+// Bogie Class
 class Bogie {
     private String id;
     private String name;
@@ -19,13 +19,12 @@ class Bogie {
 
     @Override
     public String toString() {
-        return String.format("ID: %s | Name: %-12s | Capacity: %d", id, name, capacity);
+        return String.format("[%s | Cap: %d]", id, capacity);
     }
 }
 
 public class TrainConsistManagementApp {
 
-    // Collections for UC2 to UC6
     private static List<Bogie> bogieList = new ArrayList<>();
     private static Set<String> uniqueBogieIds = new HashSet<>();
     private static TreeSet<String> orderedBogieIds = new TreeSet<>();
@@ -34,64 +33,65 @@ public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
         // UC1: Initialize
-        System.out.println("=== UC1: Initialize Train ===");
-        System.out.println("Train Consist Management System Started.\n");
+        System.out.println("=== Train Consist Management System ===\n");
 
         // UC2 - UC6: Adding Data
         addBogieData("B101", "Sleeper", 72);
         addBogieData("B105", "AC Chair", 40);
         addBogieData("B103", "First Class", 24);
         addBogieData("B102", "General", 90);
-        addBogieData("B104", "Sleeper", 72);
+        addBogieData("B104", "Sleeper", 72); // Duplicate type for grouping test
+        addBogieData("B106", "AC Chair", 40); // Duplicate type for grouping test
 
-        // Display Collection States
+        // Previous UC Displays
         displayCollectionStatus();
+        sortBogiesByCapacity();      // UC7
+        filterHighCapacityBogies(60); // UC8
 
-        // UC7: Sort by Capacity
-        sortBogiesByCapacity();
-
-        // UC8: Filter using Streams
-        filterHighCapacityBogies(60);
+        // UC9: Grouping by Type
+        groupBogiesByType();
     }
 
     private static void addBogieData(String id, String name, int capacity) {
         Bogie bogie = new Bogie(id, name, capacity);
-
-        bogieList.add(bogie);                // UC2: ArrayList
-        uniqueBogieIds.add(id);             // UC3: HashSet
-        orderedBogieIds.add(id);            // UC4: TreeSet
-        insertionOrderIds.add(id);          // UC5: LinkedHashSet
-        bogieCapacityMap.put(id, capacity); // UC6: HashMap
+        bogieList.add(bogie);
+        uniqueBogieIds.add(id);
+        orderedBogieIds.add(id);
+        insertionOrderIds.add(id);
+        bogieCapacityMap.put(id, capacity);
     }
 
     private static void displayCollectionStatus() {
-        System.out.println("=== UC3-UC6: Collection Snapshots ===");
-        System.out.println("Unique IDs (HashSet): " + uniqueBogieIds);
-        System.out.println("Sorted IDs (TreeSet): " + orderedBogieIds);
-        System.out.println("Insertion Order (LinkedHashSet): " + insertionOrderIds);
-        System.out.println("Capacity Mapping (HashMap): " + bogieCapacityMap + "\n");
+        System.out.println("=== UC3-UC6: Unique & Ordered Data ===");
+        System.out.println("Unique IDs: " + uniqueBogieIds);
+        System.out.println("Sorted IDs: " + orderedBogieIds + "\n");
     }
 
     private static void sortBogiesByCapacity() {
-        System.out.println("=== UC7: Sorted by Capacity (Comparator) ===");
+        System.out.println("=== UC7: Sorted by Capacity ===");
         bogieList.sort(Comparator.comparingInt(Bogie::getCapacity));
         bogieList.forEach(System.out::println);
         System.out.println();
     }
 
     private static void filterHighCapacityBogies(int threshold) {
-        System.out.println("=== UC8: Filtering Bogies (Streams) ===");
-        System.out.println("Filtering bogies with capacity > " + threshold + "...");
-
-        // Stream Pipeline: Source -> Filter -> Collect
-        List<Bogie> filtered = bogieList.stream()
+        System.out.println("=== UC8: Filtered (Cap > " + threshold + ") ===");
+        bogieList.stream()
                 .filter(b -> b.getCapacity() > threshold)
-                .collect(Collectors.toList());
+                .forEach(System.out::println);
+        System.out.println();
+    }
 
-        if (filtered.isEmpty()) {
-            System.out.println("No bogies found.");
-        } else {
-            filtered.forEach(System.out::println);
-        }
+    private static void groupBogiesByType() {
+        System.out.println("=== UC9: Grouping Bogies by Type (Streams) ===");
+
+        // Use Collectors.groupingBy to create a Map<String, List<Bogie>>
+        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
+                .collect(Collectors.groupingBy(Bogie::getName));
+
+        // Display the grouped structure
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Category: " + type + " -> " + list);
+        });
     }
 }
