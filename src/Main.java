@@ -19,7 +19,7 @@ class Bogie {
 
     @Override
     public String toString() {
-        return String.format("[%s | Cap: %d]", id, capacity);
+        return String.format("[%s | %s | Cap: %d]", id, name, capacity);
     }
 }
 
@@ -32,7 +32,6 @@ public class TrainConsistManagementApp {
     private static Map<String, Integer> bogieCapacityMap = new HashMap<>();
 
     public static void main(String[] args) {
-        // UC1: Initialize
         System.out.println("=== Train Consist Management System ===\n");
 
         // UC2 - UC6: Adding Data
@@ -40,16 +39,16 @@ public class TrainConsistManagementApp {
         addBogieData("B105", "AC Chair", 40);
         addBogieData("B103", "First Class", 24);
         addBogieData("B102", "General", 90);
-        addBogieData("B104", "Sleeper", 72); // Duplicate type for grouping test
-        addBogieData("B106", "AC Chair", 40); // Duplicate type for grouping test
+        addBogieData("B104", "Sleeper", 72);
 
-        // Previous UC Displays
+        // Previous UC Outputs
         displayCollectionStatus();
-        sortBogiesByCapacity();      // UC7
-        filterHighCapacityBogies(60); // UC8
+        sortBogiesByCapacity();       // UC7
+        filterHighCapacityBogies(60);  // UC8
+        groupBogiesByType();           // UC9
 
-        // UC9: Grouping by Type
-        groupBogiesByType();
+        // UC10: Total Seat Count using Reduce
+        calculateTotalSeats();
     }
 
     private static void addBogieData(String id, String name, int capacity) {
@@ -62,13 +61,13 @@ public class TrainConsistManagementApp {
     }
 
     private static void displayCollectionStatus() {
-        System.out.println("=== UC3-UC6: Unique & Ordered Data ===");
+        System.out.println("=== UC3-UC6: Core Collections ===");
         System.out.println("Unique IDs: " + uniqueBogieIds);
         System.out.println("Sorted IDs: " + orderedBogieIds + "\n");
     }
 
     private static void sortBogiesByCapacity() {
-        System.out.println("=== UC7: Sorted by Capacity ===");
+        System.out.println("=== UC7: Sorting ===");
         bogieList.sort(Comparator.comparingInt(Bogie::getCapacity));
         bogieList.forEach(System.out::println);
         System.out.println();
@@ -83,15 +82,23 @@ public class TrainConsistManagementApp {
     }
 
     private static void groupBogiesByType() {
-        System.out.println("=== UC9: Grouping Bogies by Type (Streams) ===");
-
-        // Use Collectors.groupingBy to create a Map<String, List<Bogie>>
-        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
+        System.out.println("=== UC9: Grouping by Type ===");
+        Map<String, List<Bogie>> grouped = bogieList.stream()
                 .collect(Collectors.groupingBy(Bogie::getName));
+        grouped.forEach((type, list) -> System.out.println(type + ": " + list));
+        System.out.println();
+    }
 
-        // Display the grouped structure
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Category: " + type + " -> " + list);
-        });
+    private static void calculateTotalSeats() {
+        System.out.println("=== UC10: Total Seating Capacity (Reduce) ===");
+
+        // Step 1: Convert to Stream
+        // Step 2: Map to Integer (extract capacity)
+        // Step 3: Reduce (Sum all values)
+        int totalCapacity = bogieList.stream()
+                .map(Bogie::getCapacity)
+                .reduce(0, Integer::sum);
+
+        System.out.println("Total Seating Capacity of the Train: " + totalCapacity + " seats.");
     }
 }
