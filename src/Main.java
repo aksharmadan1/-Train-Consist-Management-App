@@ -2,56 +2,53 @@ import java.util.*;
 
 public class TrainConsistManagementApp {
 
+    // Our central collection of bogie IDs
+    private static List<String> bogieIds = new ArrayList<>();
+
     public static void main(String[] args) {
-        System.out.println("=== Train Consist Management System ===\n");
+        System.out.println("=== UC20: Search Operations with State Validation ===\n");
 
-        // UC19: Binary Search for Bogie ID
-        String[] bogieIds = {"B105", "B101", "B106", "B102", "B104", "B103"};
-        String searchKey = "B104";
-
-        System.out.println("--- UC19: Binary Search (Optimized) ---");
-
-        // PRECONDITION: Data must be sorted for Binary Search to work
-        Arrays.sort(bogieIds);
-        System.out.println("Sorted IDs for Search: " + Arrays.toString(bogieIds));
-        System.out.println("Searching for: " + searchKey);
-
-        // Perform Binary Search
-        int resultIndex = performBinarySearch(bogieIds, searchKey);
-
-        if (resultIndex != -1) {
-            System.out.println("✅ Success: Bogie " + searchKey + " found at sorted index " + resultIndex);
-        } else {
-            System.out.println("❌ Error: Bogie " + searchKey + " not found.");
+        // TEST 1: Attempt to search when the list is EMPTY
+        try {
+            System.out.println("Test 1: Searching an empty train...");
+            performSafeSearch("B101");
+        } catch (IllegalStateException e) {
+            System.err.println("❌ Catch Block: " + e.getMessage());
         }
 
-        System.out.println("\nProgram continues execution safely...");
+        System.out.println("\n--- Adding Bogies to the Train ---");
+        bogieIds.add("B101");
+        bogieIds.add("B105");
+        bogieIds.add("B103");
+
+        // TEST 2: Attempt to search when the list has DATA
+        try {
+            System.out.println("Test 2: Searching a populated train...");
+            int index = performSafeSearch("B105");
+            System.out.println("✅ Success: Bogie found at index " + index);
+        } catch (IllegalStateException e) {
+            System.err.println("❌ Error: " + e.getMessage());
+        }
+
+        System.out.println("\nProgram finalized successfully.");
     }
 
     /**
-     * UC19: Binary Search Implementation
-     * Strategy: Divide and Conquer
-     * Time Complexity: O(log n)
+     * UC20: Safe Search with State Validation
+     * This method wraps the search logic with a "Fail-Fast" check.
      */
-    private static int performBinarySearch(String[] arr, String key) {
-        int low = 0;
-        int high = arr.length - 1;
+    private static int performSafeSearch(String key) {
+        // 1. STATE VALIDATION (Defensive Programming)
+        if (bogieIds.isEmpty()) {
+            throw new IllegalStateException("Search Operation Failed: The train consist is empty. Please add bogies first.");
+        }
 
-        while (low <= high) {
-            // Find the middle index
-            int mid = low + (high - low) / 2;
-
-            // Compare key with middle element using compareTo()
-            int comparison = key.compareTo(arr[mid]);
-
-            if (comparison == 0) {
-                return mid; // Found it!
-            } else if (comparison > 0) {
-                low = mid + 1; // Key is in the right half
-            } else {
-                high = mid - 1; // Key is in the left half
+        // 2. SEARCH LOGIC (Linear Search from UC18)
+        for (int i = 0; i < bogieIds.size(); i++) {
+            if (bogieIds.get(i).equals(key)) {
+                return i;
             }
         }
-        return -1; // Exhausted search range, not found
+        return -1;
     }
 }
