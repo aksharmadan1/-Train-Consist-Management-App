@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 // Bogie Class
@@ -6,16 +7,19 @@ class Bogie {
     private String id;
     private String name;
     private int capacity;
+    private String cargo;
 
-    public Bogie(String id, String name, int capacity) {
+    public Bogie(String id, String name, int capacity, String cargo) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
+        this.cargo = cargo;
     }
 
     public String getId() { return id; }
     public String getName() { return name; }
     public int getCapacity() { return capacity; }
+    public String getCargo() { return cargo; }
 
     @Override
     public String toString() {
@@ -26,79 +30,55 @@ class Bogie {
 public class TrainConsistManagementApp {
 
     private static List<Bogie> bogieList = new ArrayList<>();
-    private static Set<String> uniqueBogieIds = new HashSet<>();
-    private static TreeSet<String> orderedBogieIds = new TreeSet<>();
-    private static Set<String> insertionOrderIds = new LinkedHashSet<>();
-    private static Map<String, Integer> bogieCapacityMap = new HashMap<>();
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management System ===\n");
 
-        // UC2 - UC6: Adding Data
-        addBogieData("B101", "Sleeper", 72);
-        addBogieData("B105", "AC Chair", 40);
-        addBogieData("B103", "First Class", 24);
-        addBogieData("B102", "General", 90);
-        addBogieData("B104", "Sleeper", 72);
+        // Adding a larger dataset to make performance difference visible
+        for (int i = 0; i < 1000; i++) {
+            addBogieData("B" + i, (i % 2 == 0 ? "Sleeper" : "AC Chair"), (i % 100), "None");
+        }
 
-        // Previous UC Outputs
-        displayCollectionStatus();
-        sortBogiesByCapacity();       // UC7
-        filterHighCapacityBogies(60);  // UC8
-        groupBogiesByType();           // UC9
-
-        // UC10: Total Seat Count using Reduce
-        calculateTotalSeats();
+        // Run previous logic if needed, then performance test
+        comparePerformance();
     }
 
-    private static void addBogieData(String id, String name, int capacity) {
-        Bogie bogie = new Bogie(id, name, capacity);
-        bogieList.add(bogie);
-        uniqueBogieIds.add(id);
-        orderedBogieIds.add(id);
-        insertionOrderIds.add(id);
-        bogieCapacityMap.put(id, capacity);
+    private static void addBogieData(String id, String name, int capacity, String cargo) {
+        bogieList.add(new Bogie(id, name, capacity, cargo));
     }
 
-    private static void displayCollectionStatus() {
-        System.out.println("=== UC3-UC6: Core Collections ===");
-        System.out.println("Unique IDs: " + uniqueBogieIds);
-        System.out.println("Sorted IDs: " + orderedBogieIds + "\n");
-    }
+    // --- UC13: Performance Comparison Logic ---
+    private static void comparePerformance() {
+        System.out.println("=== UC13: Performance Comparison (Loops vs Streams) ===");
 
-    private static void sortBogiesByCapacity() {
-        System.out.println("=== UC7: Sorting ===");
-        bogieList.sort(Comparator.comparingInt(Bogie::getCapacity));
-        bogieList.forEach(System.out::println);
-        System.out.println();
-    }
+        // 1. Benchmark: Traditional Loop
+        long startTimeLoop = System.nanoTime();
+        List<Bogie> loopFiltered = new ArrayList<>();
+        for (Bogie b : bogieList) {
+            if (b.getCapacity() > 50) {
+                loopFiltered.add(b);
+            }
+        }
+        long endTimeLoop = System.nanoTime();
+        long durationLoop = endTimeLoop - startTimeLoop;
 
-    private static void filterHighCapacityBogies(int threshold) {
-        System.out.println("=== UC8: Filtered (Cap > " + threshold + ") ===");
-        bogieList.stream()
-                .filter(b -> b.getCapacity() > threshold)
-                .forEach(System.out::println);
-        System.out.println();
-    }
+        // 2. Benchmark: Stream API
+        long startTimeStream = System.nanoTime();
+        List<Bogie> streamFiltered = bogieList.stream()
+                .filter(b -> b.getCapacity() > 50)
+                .collect(Collectors.toList());
+        long endTimeStream = System.nanoTime();
+        long durationStream = endTimeStream - startTimeStream;
 
-    private static void groupBogiesByType() {
-        System.out.println("=== UC9: Grouping by Type ===");
-        Map<String, List<Bogie>> grouped = bogieList.stream()
-                .collect(Collectors.groupingBy(Bogie::getName));
-        grouped.forEach((type, list) -> System.out.println(type + ": " + list));
-        System.out.println();
-    }
+        // Display Results
+        System.out.println("Loop Execution Time   : " + durationLoop + " ns");
+        System.out.println("Stream Execution Time : " + durationStream + " ns");
 
-    private static void calculateTotalSeats() {
-        System.out.println("=== UC10: Total Seating Capacity (Reduce) ===");
-
-        // Step 1: Convert to Stream
-        // Step 2: Map to Integer (extract capacity)
-        // Step 3: Reduce (Sum all values)
-        int totalCapacity = bogieList.stream()
-                .map(Bogie::getCapacity)
-                .reduce(0, Integer::sum);
-
-        System.out.println("Total Seating Capacity of the Train: " + totalCapacity + " seats.");
+        if (durationLoop < durationStream) {
+            System.out.println("Result: Traditional Loop was faster by " + (durationStream - durationLoop) + " ns");
+        } else {
+            System.out.println("Result: Stream API was faster by " + (durationLoop - durationStream) + " ns");
+        }
+        System.out.println("Total items filtered: " + loopFiltered.size());
     }
 }
