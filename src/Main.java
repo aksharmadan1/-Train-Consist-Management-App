@@ -2,14 +2,24 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-// Bogie Class
+// --- UC14: Custom Exception Class ---
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
 class Bogie {
     private String id;
     private String name;
     private int capacity;
     private String cargo;
 
-    public Bogie(String id, String name, int capacity, String cargo) {
+    // UC14: Constructor with Validation and Exception
+    public Bogie(String id, String name, int capacity, String cargo) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Invalid Capacity: " + capacity + ". Must be greater than 0.");
+        }
         this.id = id;
         this.name = name;
         this.capacity = capacity;
@@ -34,51 +44,37 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management System ===\n");
 
-        // Adding a larger dataset to make performance difference visible
-        for (int i = 0; i < 1000; i++) {
-            addBogieData("B" + i, (i % 2 == 0 ? "Sleeper" : "AC Chair"), (i % 100), "None");
+        // UC14: Testing Exception Handling
+        System.out.println("=== UC14: Handling Invalid Bogie Capacity ===");
+
+        // 1. Attempt to add a VALID bogie
+        try {
+            addBogieData("B501", "Sleeper", 72, "None");
+            System.out.println("✅ Successfully added Sleeper bogie.");
+        } catch (InvalidCapacityException e) {
+            System.err.println("❌ Error: " + e.getMessage());
         }
 
-        // Run previous logic if needed, then performance test
-        comparePerformance();
+        // 2. Attempt to add an INVALID bogie (Capacity = 0)
+        try {
+            addBogieData("B502", "AC Chair", 0, "None");
+        } catch (InvalidCapacityException e) {
+            System.err.println("❌ Expected Error Caught: " + e.getMessage());
+        }
+
+        // 3. Attempt to add an INVALID bogie (Capacity = -10)
+        try {
+            addBogieData("B503", "General", -10, "None");
+        } catch (InvalidCapacityException e) {
+            System.err.println("❌ Expected Error Caught: " + e.getMessage());
+        }
+
+        System.out.println("\nFinal Bogie List Size: " + bogieList.size());
     }
 
-    private static void addBogieData(String id, String name, int capacity, String cargo) {
-        bogieList.add(new Bogie(id, name, capacity, cargo));
-    }
-
-    // --- UC13: Performance Comparison Logic ---
-    private static void comparePerformance() {
-        System.out.println("=== UC13: Performance Comparison (Loops vs Streams) ===");
-
-        // 1. Benchmark: Traditional Loop
-        long startTimeLoop = System.nanoTime();
-        List<Bogie> loopFiltered = new ArrayList<>();
-        for (Bogie b : bogieList) {
-            if (b.getCapacity() > 50) {
-                loopFiltered.add(b);
-            }
-        }
-        long endTimeLoop = System.nanoTime();
-        long durationLoop = endTimeLoop - startTimeLoop;
-
-        // 2. Benchmark: Stream API
-        long startTimeStream = System.nanoTime();
-        List<Bogie> streamFiltered = bogieList.stream()
-                .filter(b -> b.getCapacity() > 50)
-                .collect(Collectors.toList());
-        long endTimeStream = System.nanoTime();
-        long durationStream = endTimeStream - startTimeStream;
-
-        // Display Results
-        System.out.println("Loop Execution Time   : " + durationLoop + " ns");
-        System.out.println("Stream Execution Time : " + durationStream + " ns");
-
-        if (durationLoop < durationStream) {
-            System.out.println("Result: Traditional Loop was faster by " + (durationStream - durationLoop) + " ns");
-        } else {
-            System.out.println("Result: Stream API was faster by " + (durationLoop - durationStream) + " ns");
-        }
-        System.out.println("Total items filtered: " + loopFiltered.size());
+    // Updated helper method to handle/throw the custom exception
+    private static void addBogieData(String id, String name, int capacity, String cargo) throws InvalidCapacityException {
+        Bogie bogie = new Bogie(id, name, capacity, cargo);
+        bogieList.add(bogie);
     }
 }
