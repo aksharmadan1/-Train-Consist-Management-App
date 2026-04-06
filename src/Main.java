@@ -5,35 +5,37 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management System ===\n");
 
-        // UC16: Manual Bubble Sort (Previous Task)
-        int[] bogieCapacities = {72, 40, 24, 90, 18, 54};
-        performBubbleSort(bogieCapacities);
-        System.out.println("UC16: Sorted Capacities (Manual): " + Arrays.toString(bogieCapacities));
+        // UC17: Sorted Bogie Names (from previous task)
+        String[] bogieIds = {"B101", "B105", "B103", "B102", "B104", "B106"};
 
-        // UC17: Library Sorting for Bogie Names
-        String[] bogieNames = {"Sleeper", "AC Chair", "General", "First Class", "Pantry", "Luggage"};
+        System.out.println("--- UC18: Linear Search for Bogie ID ---");
+        String searchKey = "B103";
+        System.out.println("Searching for Bogie ID: " + searchKey);
 
-        System.out.println("\n--- UC17: Sorting Bogie Names (Arrays.sort) ---");
-        System.out.println("Original Names: " + Arrays.toString(bogieNames));
+        // Perform the search
+        int resultIndex = performLinearSearch(bogieIds, searchKey);
 
-        // Use the built-in Java library method
-        Arrays.sort(bogieNames);
+        if (resultIndex != -1) {
+            System.out.println("✅ Success: Bogie " + searchKey + " found at index " + resultIndex);
+        } else {
+            System.out.println("❌ Error: Bogie " + searchKey + " not found in the train consist.");
+        }
 
-        System.out.println("Sorted Names  : " + Arrays.toString(bogieNames));
         System.out.println("\nProgram continues execution safely...");
     }
 
-    // UC16 Method preserved for project history
-    private static void performBubbleSort(int[] arr) {
-        int n = arr.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - 1 - i; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
+    /**
+     * UC18: Linear Search Implementation
+     * Time Complexity: O(n)
+     */
+    private static int performLinearSearch(String[] arr, String key) {
+        // Sequential Traversal: Visit elements from start to end
+        for (int i = 0; i < arr.length; i++) {
+            // Equality Comparison: Use .equals() for String objects
+            if (arr[i].equals(key)) {
+                return i; // Early Termination: Stop as soon as match is found
             }
         }
+        return -1; // Return -1 if the key is not found
     }
 }
